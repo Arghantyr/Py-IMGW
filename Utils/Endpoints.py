@@ -1,0 +1,42 @@
+from requests import get
+
+SYNOP_GENERAL_URL='https://danepubliczne.imgw.pl/api/data/synop'
+STATION_OPTIONS=['id', 'name']
+DATA_OPTIONS=['json', 'xml', 'csv', 'html']
+
+class Synop:
+    def __init__(self):
+        pass
+
+    def get_station(self,
+                    by:str='id',
+                    data_format:str='json',
+                    station_id:int=None,
+                    station_name:str=None):
+        try:
+            assert by in STATION_OPTIONS
+            assert data_format in DATA_OPTIONS
+            if by=='id':
+                assert station_id != None
+                assert station_id <= 99999
+                SYNOP_URL=f'https://danepubliczne.imgw.pl/api/data/synop/id/{station_id}/format/{data_format}'
+                result = get(SYNOP_URL)
+            elif by=='name':
+                assert station_name != None
+                assert station_name.isalnum() == True
+                SYNOP_URL=f'https://danepubliczne.imgw.pl/api/data/synop/station/{station_name}/format/{data_format}'
+                result = get(SYNOP_URL)
+
+            return result._content, result.status_code
+        except Exception as e:
+            raise Exception(f"{e}")
+
+    def get_all_stations(self,
+                         data_format:str='json'):
+        try:
+            assert data_format in DATA_OPTIONS
+            result = get(f"{SYNOP_GENERAL_URL}/format/{data_format}")
+            return result._content, result.status_code
+        except Exception as e:
+            raise Exception(f"{e}")
+
