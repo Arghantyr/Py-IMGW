@@ -1,6 +1,7 @@
 from requests import get
 
 SYNOP_GENERAL_URL='https://danepubliczne.imgw.pl/api/data/synop'
+METEO_GENERAL_URL='https://danepubliczne.imgw.pl/api/data/meteo'
 DATA_OPTIONS=['json', 'xml', 'csv', 'html']
 
 class Synop:
@@ -50,8 +51,17 @@ class Synop:
         except Exception as e:
             raise Exception(f"{e}")
 
+class Meteo:
+    def __init__(self):
+        pass
 
-if __name__=='__main__':
-    s=Synop()
-    result=s.get_station_by_name(station_name='warszawa')
-    print(f"Warszawa weather: {result[0]}")
+    def get_all_stations(self,
+                         data_format:str='json'):
+        try:
+            assert data_format in DATA_OPTIONS
+            result = get(f"{METEO_GENERAL_URL}/format/{data_format}")
+            return result._content, result.status_code
+        except AssertionError:
+            raise Exception("Invalid input")
+        except Exception as e:
+            raise Exception(f"{e}")
