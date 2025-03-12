@@ -1,5 +1,6 @@
 from requests import get
 
+
 SYNOP_GENERAL_URL='https://danepubliczne.imgw.pl/api/data/synop'
 METEO_GENERAL_URL='https://danepubliczne.imgw.pl/api/data/meteo'
 HYDRO_GENERAL_URL='https://danepubliczne.imgw.pl/api/data/hydro'
@@ -74,13 +75,17 @@ class Hydro:
         pass
 
     def get_all_stations(self,
+                         data_format:str='json',
                          station_group:str='hydro'):
         try:
+            assert data_format in DATA_OPTIONS
             assert station_group in HYDRO_GROUPS
             if station_group == 'hydro':
-                result = get(HYDRO_GENERAL_URL)
+                base_url = HYDRO_GENERAL_URL
             elif station_group == 'hydro2':
-                result = get(HYDRO2_GENERAL_URL)
+                base_url = HYDRO2_GENERAL_URL
+
+            result = get(f"{base_url}/format/{data_format}")
 
             return result._content, result.status_code
         except AssertionError:
