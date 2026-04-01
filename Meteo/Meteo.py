@@ -1,14 +1,18 @@
 from requests import get
-
+from datetime import timedelta
+from ratelimit import limits, sleep_and_retry
 
 METEO_GENERAL_URL='https://danepubliczne.imgw.pl/api/data/meteo'
 DATA_OPTIONS=['json', 'xml', 'csv', 'html']
+DATA_REFRESH_PERIOD=10*60
 
 
 class Meteo:
     def __init__(self):
         pass
-
+    
+    @sleep_and_retry
+    @limits(calls=10, period=timedelta(seconds=DATA_REFRESH_PERIOD).total_seconds())
     def get_all_stations(self,
                          data_format:str='json'):
         try:
