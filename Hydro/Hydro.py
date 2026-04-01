@@ -14,8 +14,13 @@ class Hydro:
                          data_format:str='json',
                          station_group:str='hydro'):
         try:
-            assert data_format in DATA_OPTIONS
-            assert station_group in HYDRO_GROUPS
+            if data_format not in DATA_OPTIONS:
+                raise Exception("Invalid data type.")
+            
+            if station_group not in HYDRO_GROUPS:
+                raise Exception("Invalid station group")
+
+
             if station_group == 'hydro':
                 base_url = HYDRO_GENERAL_URL
             elif station_group == 'hydro2':
@@ -24,7 +29,6 @@ class Hydro:
             result = get(f"{base_url}/format/{data_format}")
 
             return result._content, result.status_code
-        except AssertionError:
-            raise Exception("Invalid input")
+
         except Exception as e:
             raise Exception(f"{e}")
