@@ -6,3 +6,4 @@ Py-IMGW is a wrapper for IMGW public API, including 3 families of endpoints:
 
 # TODO
 1. Introduce data typing
+2. Move user-defined constants to a separate config file
