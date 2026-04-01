@@ -1,3 +1,5 @@
+from datetime import timedelta
+from ratelimit import limits, sleep_and_retry
 from requests import get
 
 
@@ -5,11 +7,14 @@ HYDRO_GENERAL_URL='https://danepubliczne.imgw.pl/api/data/hydro'
 HYDRO2_GENERAL_URL='https://danepubliczne.imgw.pl/api/data/hydro2'
 DATA_OPTIONS=['json', 'xml', 'csv', 'html']
 HYDRO_GROUPS=['hydro', 'hydro2']
+DATA_REFRESH_PERIOD=10*60
 
 class Hydro:
     def __init__(self):
         pass
-
+    
+    @sleep_and_retry
+    @limits(calls=10, period=timedelta(seconds=DATA_REFRESH_PERIOD).total_seconds())
     def get_all_stations(self,
                          data_format:str='json',
                          station_group:str='hydro'):

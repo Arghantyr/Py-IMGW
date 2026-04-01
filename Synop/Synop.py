@@ -1,13 +1,17 @@
 from requests import get
-
+from datetime import timedelta
+from ratelimit import limits, sleep_and_retry
 
 SYNOP_GENERAL_URL='https://danepubliczne.imgw.pl/api/data/synop'
 DATA_OPTIONS=['json', 'xml', 'csv', 'html']
+DATA_REFRESH_PERIOD=10*60
 
 class Synop:
     def __init__(self):
         pass
-
+    
+    @sleep_and_retry
+    @limits(calls=100, period=timedelta(seconds=DATA_REFRESH_PERIOD).total_seconds())
     def get_station_by_id(self,
                           data_format:str='json',
                           station_id:int=None):
@@ -22,6 +26,8 @@ class Synop:
         except Exception as e:
             raise Exception(f"{e}")
 
+    @sleep_and_retry
+    @limits(calls=100, period=timedelta(seconds=DATA_REFRESH_PERIOD).total_seconds())
     def get_station_by_name(self,
                             station_name:str=None,
                             data_format:str='json'):
@@ -38,7 +44,9 @@ class Synop:
 
         except Exception as e:
             raise Exception(f"{e}")
-
+    
+    @sleep_and_retry
+    @limits(calls=100, period=timedelta(seconds=DATA_REFRESH_PERIOD).total_seconds())
     def get_all_stations(self,
                          data_format:str='json'):
         try:
